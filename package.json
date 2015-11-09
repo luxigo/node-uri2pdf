@@ -1,0 +1,27 @@
+{
+  "name": "uri2pdf",
+  "version": "1.0.0",
+  "description": "Convert URIs to PDFs",
+  "main": "uri2pdf.js",
+  "scripts": {
+    "test": "node test.js test.html"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/luxigo/node-uri2pdf"
+  },
+  "keywords": [
+    "pdf"
+  ],
+  "author": "luc.deschenaux@freesurf.ch",
+  "license": "MIT/AGPLv3",
+  "bugs": {
+    "url": "https://github.com/luxigo/node-uri2pdf/issues"
+  },
+  "homepage": "https://github.com/luxigo/node-uri2pdf#readme",
+  "dependencies": {
+    "extend": "^3.0.0",
+    "phantom": "^0.8.0",
+    "phantomjs": "^1.9.18"
+  }
+}
