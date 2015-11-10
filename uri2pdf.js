@@ -208,6 +208,7 @@ extend(true,uri2pdf.prototype,{
    * @param options [object]
    * @param options.uri [string] URI to convert
    * @param options.outfile [string] output PDF file path
+   * @param options.http.headers [object] custom HTTP headers
    * @param options.uptoyou [uptoyou] uptoyou
    *
    * @emit render [event] to indicate success or failure (when event.error is set)
@@ -220,6 +221,10 @@ extend(true,uri2pdf.prototype,{
       uri2pdf.session.createPage(function createPage_callback(_page) {
         page=_page;
         uri2pdf.setTimeout(page,options);
+
+        if (options.http && options.http.headers) {
+            page.customHeaders = extend({},options.http.headers);
+        }
 
         page.open(options.uri,function pageOpen_callback(success) {
           clearTimeout(options.timeout);
