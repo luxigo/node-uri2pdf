@@ -402,8 +402,14 @@ extend(true,uri2pdf.prototype,{
   onready: function uri2pdf_onready(e) {
     var uri2pdf=this;
     if (uri2pdf.callback) {
-      return uri2pdf.callback(e);
+      if (uri2pdf.callback(e)===false) {
+          return false;
+      }
     }
+    if (!uri2pdf.queue.active) {
+        uri2pdf.next();
+    }
+
   }, // uri2pdf.onready
 
   /**
@@ -441,8 +447,10 @@ extend(true,uri2pdf.prototype,{
       uri2pdf.convert(uri2pdf.queue.shift());
 
     } else {
-      uri2pdf.queue.active=false;
-      uri2pdf.dispatch('end');
+      if (uri2pdf.queue.active) {
+        uri2pdf.queue.active=false;
+        uri2pdf.dispatch('end');
+      }
     }
 
   }, // uri2pdf.next
