@@ -447,6 +447,10 @@ extend(true,uri2pdf.prototype,{
   next: function uri2pdf_next(){
     var uri2pdf=this;
 
+    if (!uri2pdf.session) {
+        return;
+    }
+
     if (uri2pdf.queue.length) {
       uri2pdf.queue.active=true;
       uri2pdf.convert(uri2pdf.queue.shift());
