@@ -105,6 +105,12 @@ extend(true,uri2pdf.prototype,{
   listeners: [],
 
   /**
+   * @property uri2pdf.setPageOptionsRecursively
+   *
+   */
+  setPageOptionsRecursively: false,
+
+  /**
    * @method uri2pdf.dispatch
    */
   dispatch: function uri2pdf_dispatch(e){
@@ -248,7 +254,7 @@ extend(true,uri2pdf.prototype,{
 
                 (function(obj,path,properties){
 
-                var recursive=false;
+                var recursive=uri2pdf.setPageOptionsRecursively;
 
                 // set property and loop asynchronously
                 function setNextProperty() {
