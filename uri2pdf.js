@@ -227,36 +227,71 @@ extend(true,uri2pdf.prototype,{
         }
 
         page.open(options.uri,function pageOpen_callback(success) {
-          clearTimeout(options.timeout);
-          if (!success) {
-            throw 'page.open failed for '+options.uri;
-          }
-
-          var pageOptions=uri2pdf.phantom.options.pageOptions;
-          var index=pageOptions.length;
-
-          // recursive loop
-          function setNextPageOption(){
-
-            // all options have been set ?
-            if (!index) {
-              // render and save pdf
-              uri2pdf.setTimeout(page,options);
-              uri2pdf.saveAsPDF(page,options);
-              return;
+            clearTimeout(options.timeout);
+            if (!success) {
+                throw 'page.open failed for '+options.uri;
             }
 
-            // get page option
-            --index;
-            var option=pageOptions[index];
 
-            // set page option and loop asynchronously
-            page.set(option.name,option.value,setNextPageOption);
+            // set pageOptions recursively and loop asynchronously
+            function processObjectAsyncursively(obj,path,callback) {
 
-          } // setNextPageOption
+                path=path||'';
 
-          // enter the loop
-          setNextPageOption();
+                // get property list
+                var properties=[];
+                for (var prop in obj) {
+                    if (obj.hasOwnProperty(prop)) {
+                        properties.push(prop);
+                    }
+                }
+
+                (function(obj,path,properties){
+
+                var recursive=false;
+
+                // set property and loop asynchronously
+                function setNextProperty() {
+
+                    // last child property ?
+                    if (!properties.length) {
+                        return callback();
+                    }
+
+                    var property_name=properties.shift();
+                    var destPath=path+(path.length?'.':'')+property_name;
+
+                    if (recursive && typeof(obj[property_name])=='object') {
+                        processObjectAsyncursively(obj[property_name],destPath,setNextProperty);
+
+                    } else {
+                        page.set(destPath, obj[property_name],setNextProperty);
+                    }
+
+                }
+
+                // enter the properties loop
+                setNextProperty();
+                })(obj,path,properties);
+            }
+
+            // enter the toplevel loop
+            var pageOptions=uri2pdf.phantom.options.pageOptions;
+
+            // allow to specify callbacks for header and footer
+            if (typeof(pageOptions)=='function') {
+                pageOptions=pageOptions();
+            }
+
+            processObjectAsyncursively(pageOptions,'',function(){
+                // render and save pdf
+                uri2pdf.setTimeout(page,options);
+                uri2pdf.saveAsPDF(page,options);
+            });
+
+            if (options.set) {
+                // TODO: pass parameters for header and footer
+            }
 
         });
 
